@@ -1,6 +1,7 @@
 package com.example.tereshchenko.mapsshabl;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -59,6 +60,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -68,8 +71,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener{
-    private static final LatLng SYDNEY = new LatLng(-33.87365, 151.20689);
     private GoogleMap mMap;
+
+
     Marker q;
 
     //Варианты для разрешения на использования геолокации
@@ -94,7 +98,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         private String PostalCode;
         private String hotel;
         private String food;
-        private String PhoneNumber;
+        private String City;
 
 
         public String getHotel() {
@@ -120,12 +124,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             this.PostalCode = PostalCode;
         }
 
-        public String getPhoneNumber() {
-            return PhoneNumber;
+        public String getCity() {
+            return City;
         }
 
-        public void setPhoneNumber(String PhoneNumber) {
-            this.PhoneNumber = PhoneNumber;
+        public void setCity(String City) {
+            this.City = City;
         }
 
     }
@@ -336,7 +340,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (addresses != null && addresses.size() > 0) {
 
 
-
                 address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                 String city = addresses.get(0).getLocality();
                 String state = addresses.get(0).getAdminArea();
@@ -345,13 +348,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
 
 
-
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return   address;
-    } public String getPostalCode(double LATITUDE, double LONGITUDE) {
+            if (address.length() > 30) {
+                String A = "";
+                String B="";
+                for (int i = 0; i < 30; i++){
+                    A += address.charAt(i);}
+                    for (int i = 30; i < address.length(); i++){
+                        B+= address.charAt(i); }
+            return A+"-"+"\n"+B;
+            }else
+                return  address;
+    }
+     public String getPostalCode(double LATITUDE, double LONGITUDE) {
 
         String PostalCode = "";
 
@@ -366,41 +378,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return   PostalCode;
     }
-    public String getPhoneNumber(double LATITUDE, double LONGITUDE) {
+    public String getCity(double LATITUDE, double LONGITUDE) {
 
-        String PhoneNumber = "";
+        String City = "";
 
         try {
             Geocoder geocoder = new Geocoder(this, Locale.getDefault());
             List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
             if (addresses != null && addresses.size() > 0) {
-                PhoneNumber = addresses.get(0).getPhone();
+                City = addresses.get(0).getLocality();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(PhoneNumber != null)
-        return   PhoneNumber;
-        else
-            return "NO Phone Number For This Place";
+
+        return   City;
+
     }
     //Пишем свою камеру
     private void moveCamera(LatLng latLng,float zoom, String title)
     {
         Log.d("moveCamera","moveCamera: двигаем камеру на: lat: " + latLng.latitude + " ,lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
+        String[] f = title.split(",");
 
        String snippet = getAddress(latLng.latitude,latLng.longitude);
 
         if (!title.equals("Ваше местоположение!"))
         {
 
-            MarkerOptions options = new MarkerOptions().position(latLng).title(title).snippet(snippet);
+            MarkerOptions options = new MarkerOptions().position(latLng).title(f[0]+","+f[1]).snippet(snippet);
             InfoWindowData info = new InfoWindowData();
             /*info.setHotel("Hotel : excellent hotels available");
             info.setFood("Food : all types of restaurants available");*/
             info.setPostalCode("PostalCode : " + getPostalCode(latLng.latitude,latLng.longitude));
-            info.setPhoneNumber("Phone Number : " + getPhoneNumber(latLng.latitude,latLng.longitude));
+            info.setCity("City : " + getCity(latLng.latitude,latLng.longitude));
             CustomInfoWindowAdapter customInfoWindow = new CustomInfoWindowAdapter(this);
             mMap.setInfoWindowAdapter(customInfoWindow);
 

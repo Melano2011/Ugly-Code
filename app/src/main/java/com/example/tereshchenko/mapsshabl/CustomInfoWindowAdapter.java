@@ -28,10 +28,10 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         TextView name_tv = view.findViewById(R.id.name);
         TextView details_tv = view.findViewById(R.id.details);
-        TextView hotel_tv = view.findViewById(R.id.hotels);
-        TextView food_tv = view.findViewById(R.id.food);
+        //TextView hotel_tv = view.findViewById(R.id.hotels);
+        //TextView food_tv = view.findViewById(R.id.food);
         TextView postalcode_tv = view.findViewById(R.id.postalcode);
-        TextView phonenumber_tv = view.findViewById(R.id.phonenumber);
+        TextView City_tv = view.findViewById(R.id.City);
 
         name_tv.setText(marker.getTitle());
         details_tv.setText(marker.getSnippet());
@@ -40,9 +40,9 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
 
         postalcode_tv.setText(infoWindowData.getPostalCode());
-        hotel_tv.setText(infoWindowData.getHotel());
-        food_tv.setText(infoWindowData.getFood());
-        phonenumber_tv.setText(infoWindowData.getPhoneNumber());
+        //hotel_tv.setText(infoWindowData.getHotel());
+        //food_tv.setText(infoWindowData.getFood());
+        City_tv.setText(infoWindowData.getCity());
 
         return view;
     }
